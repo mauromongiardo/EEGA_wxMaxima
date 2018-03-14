@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 15.04.0 ] */
+/* [ Created with wxMaxima version 11.08.0 ] */
 
 /* [wxMaxima: input   start ] */
 kill(all)$
@@ -70,7 +70,7 @@ print("%sigma[1] . %sigma[2] . %sigma[3] = i")$
 print("_________________________________________________________")$
 print("Squared %sigma[1] . %sigma[2] . %sigma[3]")$
 sc12 : (%sigma[1].%sigma[2].%sigma[3]).(%sigma[1].%sigma[2].%sigma[3]);
-print("The result is -1 !!")$ 
+print("The result is -1 %sigma[0]!!")$ 
 
 print("end")$
 /* [wxMaxima: input   end   ] */
