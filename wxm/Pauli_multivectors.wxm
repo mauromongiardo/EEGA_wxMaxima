@@ -1,0 +1,37 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+load(Pauli_v02);
+/* code name: Pauli_multivectors.wxm */
+
+declare([a1,a2,a3],scalar)$
+declare([B1,B2,B3],scalar)$
+declare([a0,t],scalar)$
+
+/* Construct multivector */
+A :  a0 . %sigma[0] $
+print("Scalar ",'a0," Pauli matrix ",A)$
+a : a1 . %sigma[1] + a2 . %sigma[2] + a3 . %sigma[3]$
+print("Vector ",'a," Pauli matrix ",a)$
+B : %i * (B1 . %sigma[1] + B2 . %sigma[2] + B3 . %sigma[3])$
+B : ratsimp(B)$
+print("Bivector ",'B," Pauli matrix ",B)$
+T : %i * t . %sigma[0] $
+print("Pseudoscalar ",'t," Pauli matrix ",T)$
+
+print("Multivector M")$
+M : A + a + B + T ;
+
+print("_________________________________________________________")$
+print("Retrieving the elements of the multivector")$
+print("for a given Pauli matrix")$
+print("_________________________________________________________")$
+
+Gradesep(M)$
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

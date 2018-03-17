@@ -1,0 +1,40 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+load(Pauli_v02);
+
+print("original matrix")$
+delta :matrix ([%delta[0],%delta[1]],[-%delta[0],-%delta[1]]);
+
+print("diagonal matrix dd")$
+dd : matrix ([%delta[0]+%delta[1],0],[0,%delta[0]-%delta[1]]);
+
+print("matrix A = 1/sqrt(2) * (%sigma[1]+ %sigma[3])")$
+A : 1/sqrt(2) *(%sigma[1]+ %sigma[3]);
+print("A is equal to its inverse")$
+A.A;
+
+print("matrix B = 1/sqrt(2) * (%sigma[0] + %i * %sigma[2])")$
+B : 1/sqrt(2) *(%sigma[0] + %i * %sigma[2]);
+print("B dagger")$
+Bd : 1/sqrt(2) *(%sigma[0] - %i * %sigma[2]);
+print("Bdagger . B gives identity")$
+Bd.B ;
+
+print("matrix a+b, a-b")$
+apmb : matrix([a+b],[a-b]);
+
+print("1/sqrt(2)*ratsimp(A . apmb)")$
+ab : 1/sqrt(2)*ratsimp(A . apmb);
+
+print("sqrt(2)*A . ab")$
+ratsimp(sqrt(2)*A . ab);
+
+print("B . dd . A")$
+ratsimp(B . dd . A);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

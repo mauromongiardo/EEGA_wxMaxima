@@ -1,0 +1,157 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+pathmaxima:file_search_maxima$
+kill(all)$
+
+load("clifford.mac");
+load("cliffordan.mac");
+
+if get('clifford,'version)=false then load("clifford")$
+if get('cliffordan,'version)=false then load("cliffordan")$
+print("Cliford implements Clifford algebra for Maxima.")$
+ 	
+print("_____________________________________")$
+print("Program Starts")$
+print("_____________________________________")$
+
+print("Construct the Clifford basis providing the symbol and ")$
+print("space dimensionality")$
+clifford(e, 2);
+
+print("Note that it is possible to use different symbols")$
+/* 
+It is possible to use different symbols
+clifford(%sigma, 2); 
+*/
+
+print("and it is also possible to have different signatures")$
+/* 
+It is possible to define the value of the squares
+if 1,-1 
+clifford(e,0, 2);
+clifford(e,1, 1);
+*/
+
+print("_____________________________________")$
+print("Construction of Tables of products")$
+print("_____________________________________")$
+print("Geometric product")$
+mtable1(%elements);
+print("inner (dot) product ")$
+mtable1i(%elements);
+print("outer (wedge) product ")$
+mtable1o(%elements);
+print("outer")$
+mtable2o();
+
+inprotype : lc ; 
+mtable2i () ;
+
+print("The function elements provides the basis elements")$
+el : %elements;
+print("In order to retrieve one element of the basis do")$
+el[1];
+
+print("The function cons add the scalar to the base")$
+EE:cons(1, %elements );
+
+print("construct vector a")$
+ac:cvect(a); 
+print("construct vector b")$
+bc:cvect(b);
+
+print("_____________________________________")$
+print("basic products")$
+print("_____________________________________")$
+adotb  :ac | bc$
+awedgeb :ac & bc$
+ab :ac . bc$
+print("a dot b = ",'adotb," = ",adotb)$
+print("a wedge b = ",'awedgeb," = ",awedgeb)$
+print("a  b = ",'ab," = ",ab)$
+print("expand ab ", expand(ab))$
+
+print("_____________________________________")$
+print("GRADE FUNCTIONS")$
+print("_____________________________________")$
+print("grade")$
+gab : grade(ab);
+print("grade 0"," = ",gab[1])$
+print("grade 1"," = ",gab[2])$
+print("grade 2"," = ",gab[3])$
+print("The product of two vectors has given a scalar plus a bivector ")$
+
+/*
+print("If we want to retrieve the coefficient")$
+print(" e.g. of the bivector it is sufficient to divide and simplify")$
+cliffsimpall(gab[3]/el[3]);
+*/
+
+print("_____________________________________")$
+print("scalar part")$
+scalarpart(ab);
+
+print("_____________________________________")$
+print("vector part")$
+vectorpart(ab);
+
+print("_____________________________________")$
+print("grpart (2)")$
+grpart(ab,2);
+
+print("_____________________________________")$
+print("mvectorpart")$
+mvectorpart(ab);
+
+print("_____________________________________")$
+print("blade decomposition bdecompose")$
+bdecompose(ab);
+
+ac & bc;
+
+print("_____________________________________")$
+print("Several operations are feasible")$
+print("_____________________________________")$
+
+am : a[0]+ac+a[12]*el[3];
+print("blade decomposition of the multivector")$
+bdecompose(am);
+
+print("ctranspose")$
+ctranspose(ab);
+print("creverse")$
+creverse(ab);
+print("cinvolve")$
+cinvolve(ab);
+print("cconjugate")$
+cconjugate(ab);
+print("cnorm")$
+cnorm(ab);
+print("cinv")$
+cinv(ab);
+
+print("_____________________________________")$
+print("INVOLUTIONS")$
+print("_____________________________________")$
+
+print("creverse")$
+creverse(am);
+
+print("dotreverse")$
+dotreverse(am);
+
+print("cinvolve")$
+cinvolve(am);
+print("cconjugate")$
+cconjugate(am);
+
+print("dotconjugate")$
+dotconjugate(am);
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

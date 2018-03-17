@@ -1,0 +1,133 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 15.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+
+pathmaxima:file_search_maxima$
+
+file_search_maxima;
+maxima_userdir;
+
+kill(all)$
+
+load("clifford.mac");
+load("cliffordan.mac");
+
+if get('clifford,'version)=false then load("clifford")$
+if get('cliffordan,'version)=false then load("cliffordan")$
+print("Cliford implements Clifford algebra for Maxima.")$
+ 	
+print("_____________________________________")$
+print("Program Starts")$
+print("_____________________________________")$
+
+print("Construct the Clifford basis providing the symbol and ")$
+print("space dimensionality")$
+print("we select a dimension 3 with elements which squares to")$
+clifford(e, 3);
+
+print("The space is formed by ")$
+EE:cons(1, %elements );
+
+print("Table of direct products")$
+mtable1(%elements);
+
+print("Table of external product")$
+mtable1o(%elements);
+
+print("The elements are recovered as")$
+EE[1]; EE[2]; EE[3]; EE[4];
+EE[5]; EE[6]; EE[7]; EE[8];
+
+declare([%alpha,%beta,v,t],scalar);
+
+print("The function elements provides the basis elements")$
+el : %elements;
+
+print("Construct the following vectors")$
+ac:cvect(a,[x,y,z]);
+Ac:cvect(A,[x,y,z]);
+bc:cvect(b,[x,y,z]);
+Bc:cvect(B,[x,y,z]);
+cc:cvect(c,[x,y,z]);
+
+print("multivectors have the form:")$
+multi1 :  %alpha + ac + %iv . Ac + t *%iv, expand, dotsimpc;
+multi2 :  %beta + bc + %iv . Bc + v *%iv, expand, dotsimpc;
+
+/* bivector multiplication only */
+print("Let us now consider two Bivectors")$
+multi1 :   %iv . Ac , expand, dotsimpc;
+multi2 :   %iv . Bc , expand, dotsimpc;
+
+/* 
+multi1 . multi2 + multi2 . multi1, expand, dotsimpc;
+*/
+print("Form the product of two bivectors")$
+mm : multi1 . multi2, expand, dotsimpc;
+
+print("Grades")$
+mc0 : grpart(mm,0);
+mc0 : grpart(mm,1);
+mc0 : grpart(mm,2);
+mc0 : grpart(mm,3);
+
+print("Now consider two vectors")$
+ac; bc;
+print("Their product is")$
+mc : ac.bc, expand, dotsimpc;
+print("Grades")$
+ge1a : grade(mc);
+mc0 : grpart(mc,0)$
+mc1 : grpart(mc,1)$
+mc2 : grpart(mc,2)$
+mc3 : grpart(mc,3)$
+print("grade 0 ",mc0)$
+print("grade 1 ",mc1)$
+print("grade 2 ",mc2)$
+print("grade 3 ",mc3)$
+
+
+cliffsimpall(mc2);
+
+print("components in ",el[4])$
+mc2 & el[3]/%iv, expand, dotsimpc  ; /* looking at plane */
+
+print("components in ",el[5])$
+- mc2 & el[2]/%iv, expand, dotsimpc  ; /* looking at plane */
+
+print("components in ",el[6])$
+ mc2 & el[1]/%iv, expand, dotsimpc  ; /* looking at plane */
+/* */
+print("_______________________________")$
+print("Proving relevant identities")$
+print("_______________________________")$
+
+print("Performing ac & (%iv . Bc) wedge product")$
+ac & (%iv . Bc), expand, dotsimpc;
+print("The external product of a vector a with a bivector %iv . B is %i a dot B")$
+print("Commutative")$
+print("ac & (%iv . Bc) = (%iv . Bc)& ac")$
+ac & (%iv . Bc)- (%iv . Bc) & ac, expand, dotsimpc;
+
+
+print("_______________________________")$
+print("performing ac | (%iv . Bc) dot product")$
+ac | (%iv . Bc), expand, dotsimpc;
+print("The dot product of a vector a with a bivector %iv . B is -  a cross B = %i a ^ B")$
+print("It should be expected to be anticommutative, as the cross product")$
+ac | (%iv . Bc) +  (%iv . Bc) | ac, expand, dotsimpc;
+
+print("_______________________________")$
+print("Performing ac . (%iv.Bc)")$
+acBc : ac . (%iv.Bc), expand, dotsimpc;
+grade(acBc);
+print("ac . (%iv.Bc) = ac | (%iv . Bc) + ac & (%iv . Bc)")$
+print("_______________________________")$
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
