@@ -1,0 +1,76 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+load(Pauli_v02)$
+functions;
+
+/* Nabla_cyl */
+print("Introduce functional dependence")$
+depends([a11,a12,a21,a22],[%rho,phi,z]);
+
+Ap : matrix([a11,a12],[a21,a22]); 
+
+depends(w,[%rho,phi,z]);
+
+print("____________________________________________")$
+print("Example of gradient in cylindrical coordinates")$
+print("____________________________________________")$
+w : V[0]*%e^(-2*%rho)*sin(3*phi);
+
+a11 : w$ 
+a22: a11$
+a12:0 $ 
+a21 : 0$
+Ap : matrix([a11,a12],[a21,a22]); 
+
+NCAp : Nablacyl(Ap);
+
+print("retrieving the components")$
+
+M:NCAp$
+Gradecyl(M) $
+
+print("____________________________________________")$
+print("Example of Divergence")$
+print("____________________________________________")$
+print("given the vector A")$
+Arho : %rho * cos(phi) ;
+Aphi : %rho * sin(phi) ;
+Az : 3*z;
+
+print("compute the divergence in (2,0,3)")$
+print("Write the vector in Pauli matrix form")$
+Arpz : Arho * %sigma[%rho] + Aphi * %sigma[phi] + Az * %sigma[3];
+
+print("apply the nabla operator")$
+NCAp : Nablacyl(Arpz);
+
+M:NCAp$
+Gradecyl(M) $
+
+print("____________________________________________")$
+print("Example of curl")$
+print("____________________________________________")$
+print("compute curl A with A given by")$
+Arho : %e^(-2*%rho)*cos(phi);
+Aphi : 0;
+Az : sin(phi);
+
+print("Solution: ")$
+print("Express vector A in Pauli form")$
+Arpz : Arho * %sigma[%rho] + Aphi * %sigma[phi] + Az * %sigma[3];
+
+print("apply the nabla operator")$
+NCAp : Nablacyl(Arpz);
+
+M:NCAp$
+Gradecyl(M) $
+
+print("remember that nabla wedge A = i nabla x A")$
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

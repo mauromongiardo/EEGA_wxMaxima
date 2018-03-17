@@ -1,0 +1,43 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+load(Pauli_v02)$
+
+print("Introduce functional dependence")$
+depends([a11,a12,a21,a22],[x,y,z]);
+
+Ap : matrix([a11,a12],[a21,a22]); 
+
+/* in this case we are considering a vector A with only the z component */
+
+r:sqrt(x^2+y^2+z^2)$
+A[x]:0$
+A[y]:0$
+A[z]:1/r$
+/* A[z]:%e^(-%i * k * r)/r$ */
+
+Axyz : A[x] * %sigma[1] + A[y] * %sigma[2]+ A[z] * %sigma[3]$
+
+print("Pauli matrix of vector A "," = ",Axyz)$
+
+f : 1/sqrt(x^2+y^2+z^2)$
+Pf : f * %sigma[0]$
+print("Pauli matrix of scalar function f "," = ",Pf)$
+
+print("Multivector")$
+Ap : Axyz+Pf;
+print("Nabla Ap")$
+NA  : Nablarect(Ap);
+
+print("Finding the grade elements of the following Pauli matrix")$
+M : NA;
+print("By calling Gradsep(M) we have")$
+Gradesep(M)$
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

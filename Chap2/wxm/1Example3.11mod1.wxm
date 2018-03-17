@@ -1,0 +1,63 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+load(Pauli_v02)$
+functions;
+print("Introduce functional dependence")$
+depends([a11,a12,a21,a22],[x,y,z]);
+
+/* specific values */
+/* in this case we are considering a vector function A */
+print("This is the vector function considered")$
+Ax : 3*y^2;
+Ay : 2 * z;
+Az : y^2 * z;
+
+a11 : Az$
+a12:  Ax - %i * Ay$
+a21:  Ax + %i * Ay$
+a22:  -Az$
+
+print("Pauli matrix corresponding to vector A")$
+Ap : matrix([a11,a12],[a21,a22]); 
+print("evaluate nabla Ap")$
+NA  : Nablarect(Ap);
+
+print("Finding the grade elements of the Pauli matrix")$
+M : NA$
+print("By calling Gradsep(M) we have")$
+Gradesep(M)$
+
+NAx : B1r$
+NAy : B2r$
+NAz : B3r$
+
+print("Conventional analysis")$
+load(vect)$
+scalefactors(cartesian3d);
+
+Avect :[Ax,Ay,Az];
+
+print("Divergence")$
+d : div (Avect); 
+express (d);
+divAc :ev (%, diff)$
+print("Divergence ",divAc)$
+
+print("Curl")$
+curl (Avect);
+express (%);
+curlA : ev (%, diff);
+
+print("verification")$
+curlA[1]-NAx;
+curlA[2]-NAy;
+curlA[3]-NAz;
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

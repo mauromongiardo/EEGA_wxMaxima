@@ -1,0 +1,45 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+load(Pauli_v02)$
+functions;
+
+print("introducing the dependencies")$
+depends([a11,a12,a21,a22],[r,%theta,phi]);
+Ap : matrix([a11,a12],[a21,a22]); 
+
+depends([Ar,Atheta,Aphi],[r,%theta,phi])$
+print("_________________________________________________________")$
+print("vector A in spherical coordinates")$
+print("_________________________________________________________")$
+Asph : trigsimp(factor(Ar*%sigma[r]+Atheta*%sigma[%theta]+Aphi*%sigma[phi]));
+
+Ap : Asph$
+
+print("_________________________________________________________")$
+print("Performing Nabla A")$
+NA  : Nablasph(Ap); 
+
+print("_________________________________________________________")$
+M : NA$
+print("Extracting the Grades")$
+Gradesph(M)$
+
+print("_________________________________________________________")$
+print(" ATTENTION : SECOND ORDER OPERATORS")$
+print("_________________________________________________________")$
+print("Performing Nabla Nabla A")$
+NNA  : Nablasph(NA); 
+
+print("_________________________________________________________")$
+print("Extracting the Grades")$
+M : NNA$
+Gradesph(M)$
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

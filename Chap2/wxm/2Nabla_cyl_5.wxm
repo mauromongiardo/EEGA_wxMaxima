@@ -1,0 +1,50 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+load(Pauli_v02)$
+functions;
+
+depends([Arho,Aphi,Az],[%rho,phi,z]);
+Arpz : Arho*%sigma[%rho] + Aphi * %sigma[phi] + Az * %sigma[z];
+
+NArpz :Nablacyl(Arpz);
+
+M:NArpz$
+Gradecyl(M) $
+
+print("_________________________________________________________")$
+print("Second order")$
+print("_________________________________________________________")$
+NNArpz : Nablacyl(NArpz);
+M:NNArpz$
+Gradecyl(M) $
+
+/*
+print("_________________________________________________________")$
+print("An example")$
+print("_________________________________________________________")$
+print("Electric charge distribution along a line (z) Harrington pag. 107")$
+print("Potential given as ")$
+V : log(%rho);
+AV : V*%sigma[0];
+NAV :Nablacyl(AV);
+M : NAV$
+Gradecyl(M) $
+
+print("_________________________________________________________")$
+print("Another example")$
+print("_________________________________________________________")$
+/* Harrington pag. 136 eq. 6-44 */
+Az : log(%rho);
+PotA :  Az * %sigma[z];
+NAV :Nablacyl(PotA);
+M : NAV$
+Gradecyl(M) $
+*/
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

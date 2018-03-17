@@ -1,0 +1,48 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+load(Pauli_v02)$
+functions;
+print("_______________________________________")$
+print("Consider a vector E with components Ex, Ey, Ez")$
+depends([Ex,Ey,Ez],[x,y,z]);
+
+/* 
+print("Consider an Electric Field of the form")$
+print("It is important to use j instead of i in order to preserve the grades")$
+Ex :  %e^(-j * k * z)$   
+Ey : 0$
+Ez : 0$
+*/
+
+[Ex, Ey, Ez];
+
+print("Nabla as Pauli matrix in rectangular coordinates")$
+Np : dx * %sigma[1] + dy * %sigma[2] + dz * %sigma[3];
+
+print("vector E as Pauli matrix")$
+Ep : Ex * %sigma[1] + Ey * %sigma[2] + Ez * %sigma[3];
+
+print("nabla E is")$
+NEp  : Nablarect(Ep);
+
+print("nabla nabla E is")$
+NNEp : Nablarect(NEp);
+
+print("Finding the grade elements of the following Pauli matrix")$
+M : NEp;
+print("By calling Gradsep(M) we have")$
+Gradesep(M)$
+
+print("Finding the grade elements of the following Pauli matrix")$
+M : NNEp;
+print("By calling Gradsep(M) we have")$
+Gradesep(M)$
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
