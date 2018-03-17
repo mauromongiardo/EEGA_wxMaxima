@@ -1,0 +1,26 @@
+1 - disporre i file .mac in una cartella scelta arbitrariamente 
+(per esempio, nel mio caso, D:/Dropbox/EEGA/wxmac1)
+2 - aprire wxmaxima e dare il comando
+maxima_userdir;
+3 - andare nella directory ottenuta come risposta 
+(se non esiste, come di solito avviene su windows, crearla)
+4 - aprire il file maxima-init.mac (se non esiste crearlo) 
+e aggiungere alla fine le due righe
+install_dir : "D:/Dropbox/EEGA/wxmac1/" $
+file_search_maxima : append(file_search_maxima,[concat(install_dir,"###.{mac,mc,lisp}")]) $
+(ovviamente il valore assegnato a install_dir dovrà corrispondere al path 
+della cartella che contiene i file .mac)
+    NOTE IMPORTANTI
+    - il path deve necessariamente terminare con "/" altrimenti la procedura non funziona 
+    - su windows nel path si deve usare il carattere "/" come su mac e linux e non "\" 
+5 - per verifica, riavviare wxmaxima e dare il comando
+file_search_maxima;
+come ultima voce dell'elenco visualizzato dovrebbe comparire il valore di install_dir.
+
+A questo punto è possibile, da qualunque posizione, caricare i file .mac 
+con il comando load senza bisogno di indicare il path.
+In questo modo non è necessario andare a toccare la directory 
+in cui è installato wxmaxima (alcuni utenti potrebbeo non avere i privilegi per farlo). 
+Inoltre non dovrebbe essere difficile preparare degli script che chiedano
+ all'utente solo di indicare il valore di maxima_userdir
+  e facciano automaticamente tutte le altre operazioni.
