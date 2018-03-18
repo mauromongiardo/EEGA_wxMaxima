@@ -4,6 +4,7 @@
 /* [wxMaxima: input   start ] */
 kill(all);
 load(Pauli_v02)$
+functions;
 
 print("Introduce functional dependence")$
 depends([a11,a12,a21,a22],[x,y,z]);
