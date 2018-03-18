@@ -1,0 +1,135 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+
+assume(r>0);    /* Arghh */
+assume(%rho>0); /* Arghh */
+
+print("the package vect allows to perform vector operations")$
+load(vect);
+
+
+/* Loop antenna analysis */
+
+print("R is given by")$
+R : sqrt((x-r[0]*cos(pp))^2 + (y - r[0] * sin(pp))^2 + z^2);
+
+print("define the variable")$
+const : %mu[0] * I *r[0] /(4 *%pi * 'R) * %e^(-%i * k * 'R);
+const : %mu[0] * I *r[0] /(4 *%pi * R) * %e^(-%i * k * R);
+
+/* eq. before 2.41 */
+print("equation 2.41 of Collin")$
+
+print("dA")$
+dA[x] : - const * sin(pp);
+dA[y] :  const * cos(pp);
+dA[z] : 0$
+
+print("try to integrate")$
+A[x] : integrate(dA[x], pp,0, 2 * %pi);
+
+print("Direct integration of 2.41 failed! Proceed with some approximations...")$
+
+print("rewrite R as")$
+/*
+x : r * sin(%theta) * cos(p);
+y : r * sin(%theta) * sin(p);
+z : r * cos(%theta)
+*/
+R : subst (r * sin(%theta) * cos(p), x,R);
+R : subst (r * sin(%theta) * sin(p), y,R);
+R : subst (r * cos(%theta) , z,R);
+R : trigsimp(R);
+print("passages...")$
+print("we now drop r[0]...")$
+R :subst(0,r[0]^2,R);
+
+
+print("expansion of sqrt(1 + u)")$
+taylor(sqrt(1+u), u, 0, 2);
+
+print("u is equal to")$
+ur : ((-2*r[0]*sin(%theta)*sin(p)*sin(pp)-2*r[0]*sin(%theta)*cos(p)*cos(pp))*r)/r^2;
+
+print("Therefore R is given by")$
+R : r*(1-ur/2);
+
+print("expansion of %e^u")$
+taylor(%e^u, u, 0, 2);
+
+uexp : %i * k * (r[0]*sin(%theta)*sin(p)*sin(pp)+r[0]*sin(%theta)*cos(p)*cos(pp));
+expterm : %e^(-%i * k * r) * (1 + uexp);
+Ac : %mu[0] * I *r[0] /(4 *%pi * r) ;
+
+print("Ax component ")$
+Axint : integrate(- expterm *sin(pp),pp,0,2*%pi);
+Axint : trigsimp(Axint);
+
+print("Ay component ")$
+Ayint : integrate( expterm *cos(pp),pp,0,2*%pi);
+Ayint : trigsimp(Ayint);
+
+print("Now express the Ax, Ay, Az")$
+A[x] : Axint * Ac;
+A[y] : Ayint * Ac;
+A[z] : 0;
+
+print("By noting that -ax * sin(p) + ay * cos(p) = ap ")$
+print("we now switch to SPHERICAL COORDINATES")$
+
+
+scalefactors([[r*sin(%theta)*cos(%phi),r*sin(%theta)*sin(%phi),r*cos(%theta)],r,%theta,%phi]);
+
+As[r] :0;
+As[%theta] :0;
+As[%phi] : 1/2 * (-A[x]/sin(p)+A[y]/cos(p));
+/* in the above eq. the factor 1/2 is not clear ...there should be a mistake somewhere..*/
+
+
+print("Curl")$
+d : curl ([As[r], As[%theta], As[%phi]]); 
+express (d);
+Hp : ev (%, diff)$
+Hp : ratsimp(Hp/%mu[0]);
+print("note that the radial component of H decreases as 1/r^2")$
+print("thus remains only the phi component")$
+
+print("By introducing the dipole moment M = ",%pi * r[0]^2 *I," we have for Hphi")$
+Hphi : Hp[2]$
+Hphi : subst(M/%pi,r[0]^2,Hphi)$
+Hphi : subst(1,I,Hphi);
+
+print("the far-field electric field may be obtained by multiplying with Z[0]")$
+Eth : -Z[0] * Hphi;
+print("in the above expression we have used ar x aphi = - ",a[%theta])$
+
+print("Poynting vector")$
+poynt : - 1/2 * Eth * conjugate(Hphi);
+
+print("Total radiated power")$
+intpoynt: 2 * %pi * integrate(poynt * sin(%theta) * r^2,%theta,0,%pi);
+
+print("Try to find the radiation resistance")$
+eqr : 1/2 * Ra * I^2 - intpoynt;
+Rsol : solve(eqr,Ra);
+print("select the solution")$
+Ra : rhs(Rsol[1]);
+
+print("now perform the following substitutions")$
+print("substitute M = ", %pi * r[0]^2 *I)$
+Ra : subst(%pi * r[0]^2 *I,M,Ra);
+
+print("substitute  Z0 = ", 120 * %pi )$
+Ra : subst(120*%pi,Z[0],Ra) ;
+
+print("substitute  k = ", 2 * %pi / %lambda)$
+Ra : subst(2*%pi/%lambda,k,Ra) ;
+
+print("Bye")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

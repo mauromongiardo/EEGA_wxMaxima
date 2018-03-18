@@ -1,0 +1,65 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+
+print("the package vect allows to perform vector operations")$
+load(vect);
+
+/* By using this block you can use directly j instead of %i as unit imaginary part !!!! */
+block([simp:false],          
+?putprop(%i,?j,'?texword),          
+?aliaslist: ?list(?cons(%i,j)),         
+alias(j,%i))$
+
+assume(k[0]>0)$
+assume(sin(%theta)>0)$
+
+depends([Az,%psi],r);
+
+print("scalefactors spherical")$
+scalefactors([[r*sin(%theta)*cos(phi),r*sin(%theta)*sin(phi),r*cos(%theta)],r,%theta,phi]);
+
+/* depends(Az,[r,%theta,phi]); */
+depends(Az,[r]);
+print(" express...")$
+l_spher : express(laplacian(Az));
+print(" evaluate...")$
+l_spher : ev(l_spher,diff);
+print(" ratexpand...")$
+lap : ratexpand(l_spher);
+print("Now that we have the laplacian form the Helmholtz equation")$
+eq220 : lap + k[0]^2 * Az;
+print("and try to find out if we can get a solution")$
+ode2(eq220,Az,r);
+
+print("Then try the other approach...")$
+print("================================")$
+print("Using the substitution")$
+Az : %psi/r;
+
+print("First find d/dr ")$
+diffAz : diff(Az,r);
+print("Then substitute into our equation")$
+tt : 1/r^2 * diff(r^2 * diffAz,r) + k[0]^2 * Az;
+print("and put the solution in a more suitable form")$
+eqr : expand(tt);
+
+print("now try to find the solution")$
+sol : rhs(ode2(eqr,%psi,r));
+
+print("or in exponential form")$
+Azr: exponentialize(sol);
+
+print("by choosing the constants (%k2=%i*%k1) we can keep only the outward wave")$
+Azr : expand(Azr)$
+at(Azr, %k2=%i * %k1);
+
+Az : C[1] * %e^(- %i * k[0] *r)/r;
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

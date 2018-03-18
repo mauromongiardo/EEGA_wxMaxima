@@ -1,0 +1,158 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+assume(r>0);    
+assume(%rho>0); 
+
+/* Hertz_dipole_v05.wxm */
+
+/* To use directly j instead of %i as unit imaginary part */
+block([simp:false],          
+?putprop(%i,?j,'?texword),          
+?aliaslist: ?list(?cons(%i,j)),         
+alias(j,%i))$
+
+print("COMPUTATION OF THE FIELD PRODUCED BY AN HERTZIAN DIPOLE")$
+print("")$
+/* print("Start from eq. 2.26 of Collin book")$ */
+print("Start from the potential expressed in cartesian coordinates")$
+print("Load the package vect which allows to perform vector operations")$
+load(vect)$
+
+print("========================================================")$
+
+/*  Vector function definition*/
+print("Consider a vector potential A of the form")$
+print("in cartesian coordinates and transform it in spherical coordinates")$
+
+%psi : %e^(-j * k * r)/r$
+const : (%mu * I * dl)/(4 * %pi)$
+
+Ax : 0$   
+Ay : 0$
+Az : const * %psi$
+
+print("vector A")$
+[Ax, Ay, Az]$
+
+Arect: matrix([Ax],[Ay],[Az]);
+
+print("Transform A from cartesian to spherical using the matrix")$
+r2s : matrix(
+[sin(%theta)* cos(%phi), sin(%theta)*sin(%phi), cos(theta)], 
+[cos(%theta)*cos(%phi), cos(%theta)*sin(%phi),-sin(%theta)],
+[-sin(%phi),cos(%phi),0]);
+
+Asp : r2s . Arect$
+Asp : factor(trigsimp(Asp));
+
+print("========================================================")$
+
+
+
+cost : %mu[0]*I*dl $
+
+print("Consider spherical coordinates")$
+
+print("radial component of the vector magnetic potential A")$
+A[r] : cost * %e^(-j * k * r)/(4 * %pi *r) * cos(%theta);
+
+print("theta component of the vector magnetic potential A")$
+A[%theta] : - cost * %e^(-j * k * r)/(4 * %pi *r) * sin(%theta);
+
+print("phi component of the vector magnetic potential A")$
+A[%phi] : 0;
+
+print("In spherical coordinates evaluate curl(A)")$
+print("scalefactors spherical")$
+print("Curl")$
+
+scalefactors([[r*sin(%theta)*cos(%phi),
+        r*sin(%theta)*sin(%phi),r*cos(%theta)],r,%theta,%phi]);
+
+print("The magnetic field H is obtained from 2.27 as")$
+d : curl ([A[r], A[%theta], A[%phi]])$ 
+express (d)$
+H : 1/%mu[0] * ev (%, diff)$
+H : factor(H);
+print("Only the phi component of the magnetic field is present")$
+
+Hphi : H[3]$
+/* Hphi : ratsimp(Hphi); */
+Hphi : factor(Hphi);
+
+print("========================================================")$
+print("Electric field computed as the curl of magnetic field")$
+E :  curl([0,0,Hphi])$
+express (E)$
+EfromH :  ev (%, diff)$
+EfromH : factor(EfromH);
+
+print("Electric field:")$
+print("note that: 1/ (j * %omega * %epsilon) = -j * %eta/k")$
+EfromH : - j * %eta / k * EfromH ;
+
+print("There is a discordancy of sign with Collin in Er ??? ")$
+
+Er : EfromH[1]$
+print("The radial component of the Electric field is Er")$
+Er : trigsimp(Er)$
+Er : factor(Er);
+
+/*
+limit(Er,r,inf);
+limit(Er,k,0);
+*/
+
+Et : EfromH[2]$
+print("The theta component of the Electric field is Et")$
+Et : trigsimp(Et)$
+Et : factor(Et);
+
+Ep : EfromH[3]$
+print("The phi component of the Electric field is Ep")$
+Ep : trigsimp(Ep);
+
+print("==========================================")$
+print("radiated Electric field : theta component  ")$
+Etr : ((j*%eta*sin(%theta)*dl*k^2*r^2)*%e^(-j*k*r)*I)/(4*%pi*k*r^3); 
+
+print("==========================================")$
+print("radiated Magnetic field : phi component  ")$
+Hphir : ((j*sin(%theta)*dl*k*r)*%e^(-j*k*r)*I)/(4*%pi*r^2); 
+
+print("==========================================")$
+print("Compute power: start from Etheta x Hphi: radiated Poynting vector")$
+Poynt[r] : 1/2 * Etr * conjugate(Hphir);
+
+print("Now try to evaluate the total radiated power")$
+print("The infinitesimal solid angle is r^2*sin(theta) d%theta d%phi")$
+print("perform the integral in %phi")$
+
+P1 : integrate(Poynt[r],x,0,2*%pi);
+
+print("and now perform the integral in %theta (cfr. eq. 2.35)")$
+P2 : integrate(P1*r^2*sin(%theta),%theta,0,%pi);
+
+print("Directivity (cfr. 2.36)")$
+Dir : Poynt[r] / P2 * 4 * %pi *r^2;
+
+print("Radiation resistance (cfr. 2.39)")$
+Ra : P2 * 2 / I^2;
+
+
+/*
+depends(t,[r,%theta,%phi]);
+
+l_spher : express(laplacian(t));
+l_spher : ev(l_spher,diff);
+ratexpand(l_spher);
+*/
+
+print("Bye")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

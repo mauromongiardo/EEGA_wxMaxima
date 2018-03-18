@@ -1,0 +1,29 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+%sigma[0] : matrix ([1,0],[0,1])$
+%sigma[1] : matrix ([0,1],[1,0])$
+%sigma[2] : matrix ([0,-%i],[%i,0])$
+%sigma[3] : matrix ([1,0],[0,-1])$
+
+print("matrix A = 1/sqrt(2) * (%sigma[1]+ %sigma[3])")$
+A : 1/sqrt(2) *(%sigma[1]+ %sigma[3]);
+print("A is equal to its inverse")$
+A.A;
+print("Dirac gamma0 matrix (s0 stands for sigma0)")$
+%gamma[0] : matrix([s[0],0],[0,-s[0]]);
+print("pass to Weyl gamma0 matrix")$
+Wg[0]: A. %gamma[0] .A ;
+
+print("Dirac gammai matrix (si stands for sigmai)")$
+%gamma[i] : matrix([0,s[i]],[-s[i],0]);
+print("pass to Weyl gammai matrices")$
+Wg[i]: A. %gamma[i] .A ;
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

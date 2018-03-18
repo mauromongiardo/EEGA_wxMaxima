@@ -1,0 +1,74 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+load(Pauli_v02);
+
+/* code name : Dipole_weyl_v03 */
+/* 
+write the potential as a Pauli matrix,
+using the Weyl identity
+perform the nabla operation and obtain the H components
+and from H  obtain the E field
+and the Green's function
+*/
+
+depends([a11,a12,a21,a22],[x,y,z]);
+Ap : matrix([a11,a12],[a21,a22]); 
+
+/*  Vector function definition*/
+print("Consider a Vector potential of the form")$
+
+r : sqrt(x^2+y^2+z^2)$
+%psi : %e^(-j * k * r)/r$
+const : (%mu * I * dl)/(4 * %pi)$
+
+print("The double integral is omitted for the moment")$
+%psi : -j/(2*%pi) * %e^(-j*(k[x]*x+k[y]*y) -j*k[z]*z)/k[z];
+
+Ax : 0$   
+Ay : 0$
+Az : const * %psi$
+
+[Ax, Ay, Az];
+
+print("__________________________________________________________")$
+print("vector A as Pauli matrix")$
+Ap : Ax * %sigma[1] + Ay * %sigma[2] + Az * %sigma[3];
+
+print("__________________________________________________________")$
+print("Nabla A is")$
+
+NAp  : Nablarect(Ap)$
+
+NAp  : subst(-1,j^2,NAp  );
+
+print("The trace corresponds to the divergence and is")$
+traceNAp : factor(ratsimp(1/2 * (NAp[1,1] + NAp[2,2])))$
+traceNApxyz : traceNAp;
+
+divA : %sigma[0] * traceNApxyz$
+
+print("__________________________________________________________")$
+print("Nabla ^ A is")$
+NestA : ratsimp(NAp - divA)$
+NestA : factor(NestA);
+print("The magnetic field is")$
+Hp : gfactor(NestA/%mu/%i);
+
+print("Electric field")$
+Ep : ratsimp(1/j * %eta / k *Nablarect(Hp)/%i);
+fac : (%eta * I * dl) / (k * 8 * %pi^2)$
+face : %e^(-j*z*k[z]-j*y*k[y]-j*x*k[x])$
+print("By sorting out ",fac*face)$
+Epsimp : ratsimp(Ep / fac /face);
+ 
+print("Multiplication with %sigma[3] gives the Green function")$
+ratsimp(Epsimp . %sigma[3]);
+
+print("Bye")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
