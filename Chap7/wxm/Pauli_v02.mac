@@ -1,0 +1,278 @@
+
+/*
+print("Definitions introduced in Pauli_v02")$
+print("innerproduct(A,B)")$
+
+print("_______________________________________")$
+print("RECTANGULAR COORDINATES ")$
+print("_______________________________________")$
+print("%sigma[0], %sigma[1], %sigma[2], %sigma[3]")$
+print("Gradesep(M)")$
+print("Nablarect(Ap)")$
+
+print("_______________________________________")$
+print("CYLINDRICAL COORDINATES ")$
+print("_______________________________________")$
+print("%sigma[%rho], %sigma[phi], %sigma[z]")$
+print("Gradecyl(M)")$
+print("Nablacyl(Ap)")$
+
+print("_______________________________________")$
+print("SPHERICAL COORDINATES ")$
+print("_______________________________________")$
+print("%sigma[r], %sigma[%theta], %sigma[phi]")$
+print("Gradesph(M)")$
+print("Nablasph(Ap)")$
+*/
+
+/*
+print("_________________________________________________________")$
+print("Pauli Matrices Cartesian")$
+print("_________________________________________________________")$
+*/
+%sigma[0] : matrix([1,0],[0,1])$
+%sigma[1] : matrix([0,1],[1,0])$
+%sigma[2] : matrix([0,-%i],[%i,0])$
+%sigma[3] : matrix([1,0],[0,-1])$
+
+/*
+print("_________________________________________________________")$
+print("Pauli Matrices Cylindrical")$
+print("_________________________________________________________")$
+*/
+%sigma[%rho] : matrix([0,%e^(-%i * phi)],[%e^(%i * phi),0])$
+%sigma[phi] : matrix([0,-%i * %e^(-%i * phi)],[%i * %e^(%i * phi),0])$
+%sigma[z] : matrix([1,0],[0,-1])$
+
+/*
+print("_________________________________________________________")$
+print("Pauli Matrices Definition Spherical")$
+print("_________________________________________________________")$
+*/
+
+ct : cos(%theta)$
+st : sin(%theta)$
+
+%sigma[r] : matrix([ct,st * %e^(-%i * phi)],[st * %e^(%i * phi),-ct])$
+%sigma[%theta] : matrix([-st,ct  * %e^(-%i * phi)],[ct * %e^(%i * phi),st])$
+%sigma[phi] : matrix([0,-%i * %e^(-%i * phi)],[%i * %e^(%i * phi),0])$
+
+
+/****************Block Start*******************************/
+innerproduct(amat,bmat,tr) :=
+block([],
+cctr : amat .bmat,
+tr : ratsimp((cctr[1,1]+cctr[2,2])/2)
+ )$	
+/****************Block End*******************************/
+
+
+depends([a11,a12,a21,a22],[x,y,z])$
+Ap : matrix([a11,a12],[a21,a22])$
+
+/* 
+The block Nablarect perform the nabla operation
+in rectangular coordinates on a Pauli matrix Ap
+*/
+
+/****************Block Start*******************************/
+Nablarect(Ap) := 
+block([],
+NAp : %sigma[1].(diff(Ap,x)) + %sigma[2].(diff(Ap,y)) + %sigma[3].(diff(Ap,z)),
+NAp : factor(NAp)
+)$
+/****************Block End*******************************/
+
+/* Gradesep  */
+
+/****************Block Start*******************************/
+Gradesep(M):=
+block([],
+/*
+print("_______________________________________"),
+print("separate the components"),
+print("_______________________________________"),
+*/
+tr0 : innerproduct(M,%sigma[0],tr0),
+tr1 : innerproduct(M,%sigma[1],tr1),
+tr2 : innerproduct(M,%sigma[2],tr2),
+tr3 : innerproduct(M,%sigma[3],tr3),
+a0r : factor(realpart(tr0)),
+a1r : factor(realpart(tr1)),
+a2r : factor(realpart(tr2)),
+a3r : factor(realpart(tr3)),
+B1r : factor(imagpart(tr1)),
+B2r : factor(imagpart(tr2)),
+B3r : factor(imagpart(tr3)),
+t0r : factor(imagpart(tr0)),
+
+print("_________________________________________________________"),
+print("Grade 0"),
+print('a0r," = ",a0r),
+print("_________________________________________________________"),
+print("Grade 1"),
+print('a1r," = ",a1r),
+print('a2r," = ",a2r),
+print('a3r," = ",a3r),
+print("_________________________________________________________"),
+print("Grade 2"),
+print('B1r," = ",B1r),
+print('B2r," = ",B2r),
+print('B3r," = ",B3r),
+print("_________________________________________________________"),
+print("Grade 3"),
+print('t0r," = ",t0r)
+ )$	
+/****************Block End*******************************/
+
+
+/* Nabla_cyl */
+/* print("Introduce functional dependence")$ */
+depends([a11,a12,a21,a22],[%rho,phi,z])$
+Ap : matrix([a11,a12],[a21,a22])$
+
+/***********************Block start***********************/
+/*_________________________________________________*/
+/* This part is the function that compute the nabla
+of a Pauli matrix in cylindrical coordinates */
+
+Nablacyl(Ap) := 
+block([],
+NAp : %sigma[%rho].(diff(Ap,%rho)) + 1/%rho * %sigma[phi].(diff(Ap,phi)) + %sigma[3].(diff(Ap,z)),
+NAp : factor(NAp)
+)$
+/***********************Block end***********************/
+
+
+
+/***********************Block start***********************/
+Gradecyl(M) := 
+block([],
+
+/* print("finding the scalar part")$ */
+NdivA : expand(trigsimp(1/2*(M[1,1]+M[2,2]))),
+a0 :realpart(NdivA ),
+t0 :imagpart(NdivA ),
+
+/* print("finding the rho component")$ */
+NArho : M . %sigma[%rho],
+NAr : expand(trigsimp(1/2*(NArho[1,1]+NArho[2,2]))),
+arho : realpart(NAr),
+Brho : imagpart(NAr),
+
+/* print("finding the phi component")$ */
+NAphi : M . %sigma[phi],
+NAp : expand(trigsimp(1/2*(NAphi[1,1]+NAphi[2,2]))),
+ap : realpart(NAp),
+Bp : imagpart(NAp),
+
+/* print("finding the z component")$ */
+NAz : M . %sigma[3],
+NAzz : expand(trigsimp(1/2*(NAz[1,1]+NAz[2,2]))),
+az : realpart(NAzz),
+Bz : imagpart(NAzz),
+
+print("_________________________________________________________"),
+print("Grade structure"),
+print("Grade 0"),
+print('a0," = ",a0),
+print("_________________________________________________________"),
+print("Grade 1"),
+print('arho," = ",arho),
+print('ap," = ",ap),
+print('az," = ",az),
+print("_________________________________________________________"),
+print("Grade 2"),
+print('Brho," = ",Brho),
+print('Bp," = ",Bp),
+print('Bz," = ",Bz),
+print("_________________________________________________________"),
+print("Grade 3"),
+print('t0," = ",t0)
+)$
+/***********************Block end *********************/
+
+
+depends([a11,a12,a21,a22],[r,%theta,phi])$
+Ap : matrix([a11,a12],[a21,a22])$ 
+
+/*_________________________________________________________________*/
+/* This block computes the nabla operator in spherical coordinates */
+/*_________________________________________________________________*/
+Nablasph(Ap) := 
+block([],
+NAp: %sigma[r].(diff(Ap,r)) + 1/r * %sigma[%theta].(diff(Ap,%theta)) +
+1/(r*sin(%theta)) * %sigma[phi].(diff(Ap,phi)),
+NAp : expand(NAp),
+NAp : factor(trigsimp(NAp))
+)$
+/*_________________________________________________________________*/
+/* Block end */
+/*_________________________________________________________________*/
+
+
+/*_________________________________________________________________*/
+/* This block computes the grades in spherical coordinates */
+/*_________________________________________________________________*/
+Gradesph(M) := 
+block([],
+
+/* print("Divergence"),*/
+DivA : expand(1/2 * (M[1,1]+M[2,2])),
+
+/* print("Dot Multiplication with %sigma[r] and taking the trace")$ */
+Asph_sr : (M . %sigma[r]),
+Asr : expand(1/2 * (Asph_sr[1,1]+Asph_sr[2,2])),
+Asr : trigsimp(Asr),
+Asr : expand(Asr),
+/* print('Asr," = ",Asr), */
+
+/* print("Dot Multiplication with %sigma[%theta] and taking the trace")$ */
+Asph_st : (M . %sigma[%theta]),
+Ast : 1/2 * (Asph_st[1,1]+Asph_st[2,2]),
+Ast : trigsimp(expand(Ast)),
+Ast : expand(Ast),
+/* print('Ast," = ",Ast), */
+
+/* print("Dot Multiplication with %sigma[phi] and taking the trace")$ */
+Asph_sp : (M . %sigma[phi]),
+Asp : 1/2 * (Asph_sp[1,1]+Asph_sp[2,2]),
+Asp : trigsimp(expand(Asp)),
+Asp : expand(Asp),
+/* print('Asp," = ",Asp), */
+
+print("_________________________________________________________"),
+print("Grade structure"),
+print("Grade 0"),
+a0 : realpart(DivA),
+print('a0," = ",a0),
+print("Grade 1"),
+ar : realpart(Asr),
+at : realpart(Ast),
+ap : realpart(Asp),
+ar : factor(trigsimp(ar)),
+at : factor(trigsimp(at)),
+ap : factor(trigsimp(ap)),
+print('ar," = ",ar),
+print('at," = ",at),
+print('ap," = ",ap),
+print("Grade 2"),
+Bar : imagpart(Asr),
+Bat : imagpart(Ast),
+Bap : imagpart(Asp),
+Bar : factor(trigsimp(Bar)),
+Bat : factor(trigsimp(Bat)),
+Bap : factor(trigsimp(Bap)),
+print('Bar," = ",Bar),
+print('Bat," = ",Bat),
+print('Bap," = ",Bap),
+print("Grade 3"),
+t0 : imagpart(DivA),
+print('t0," = ",t0)
+)$
+/*_________________________________________________________________*/
+/* Block end */
+/*_________________________________________________________________*/
+
+
+

@@ -1,0 +1,84 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+load(Pauli_v02)$
+functions;
+/* 3Dipole_sph_2.wxm */
+
+print("introducing the dependencies")$
+depends([a11,a12,a21,a22],[r,%theta,phi]);
+Ap : matrix([a11,a12],[a21,a22]); 
+
+print("_________________________________________________________")$
+print("vector A in spherical coordinates")$
+print("_________________________________________________________")$
+
+print("It is assumed that the dipole is oriented along z")$
+print("also the potential will be oriented along z")$
+Az : %e^(-j * k *r)/r;
+
+print("Remeber that the Pauli matrix of a vector is independent of the coordinates")$
+print("Accordingly, we write it in rectangular coordinates,")$
+print("but it can be used for computation also in spherical coordinates")$
+
+print("The constant c1 is also defined")$
+c1 : %mu * I*dl/(4*%pi);
+Ap : matrix([Az,0],[0,-Az]);
+
+print("_________________________________________________________")$
+print("Solution procedure")$
+print("_________________________________________________________")$
+print("The solution procedure is organized in 2 steps")$
+print("_________________________________________________________")$
+print("_________________________________________________________")$
+print("1)  The magnetic field is obtained from i %eta H = v nabla wedge A ")$
+print("_________________________________________________________")$
+NA  : Nablasph(Ap); 
+print("The divergence is")$
+divA : 1/2 *(NA[1,1]+NA[2,2]);
+print("Nabla wedge A is")$
+NWA : NA - divA*%sigma[0];
+
+M : NWA$
+print("Extracting the Grades")$
+Gradesph(M)$
+print("It is seen that i %eta H is only in the phi direction and is ")$
+vBap : v * Bap$
+Hr : factor(1/%mu * Bar)*c1$
+Ht : factor(1/%mu * Bat)*c1$
+Hphi : factor(1/%mu * Bap)*c1$
+print('Hr," = ",Hr)$
+print('Ht," = ",Ht)$
+print('Hphi," = ",Hphi)$
+
+print("_________________________________________________________")$
+print("2)  The electric field is recoverd from j/k * nabla(i %eta H) ")$
+print("_________________________________________________________")$
+print("The Pauli matrix representing H is ")$
+HP : %i * vBap * %sigma[phi];
+EFA : j/k * Nablasph(HP)$
+EFA :subst(-1,j^2,EFA );
+M : EFA$
+print("Extracting the Grades")$
+Gradesph(M)$
+print("The electric field is equal to")$
+Er : ar$
+Et : at$
+Ep : ap$
+Er : subst(-1,j^2,Er)$
+Et : subst(-1,j^2,Et)$
+Er : factor(Er)*c1$
+Er : subst(%eta/v, %mu,Er)$
+Et : factor(Et)*c1$
+Et : subst(%eta/v, %mu,Et)$
+print('Er," = ",Er)$
+print('Et," = ",Et)$
+print('Ep," = ",Ep)$
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
