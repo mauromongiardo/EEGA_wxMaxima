@@ -1,0 +1,126 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+
+/* Define Dirac Gammas */
+%sigma[0] : matrix([1,0],[0,1])$
+%sigma[1] : matrix([0,1],[1,0])$
+%sigma[2] : matrix([0,-%i],[%i,0])$
+%sigma[3] : matrix([1,0],[0,-1])$
+
+g0 :  kronecker_product (%sigma[3],%sigma[0])$
+g1 :  factor(kronecker_product (%i*%sigma[2],%sigma[1]))$
+g2 :  kronecker_product (%i*%sigma[2],%sigma[2])$
+g3 :  kronecker_product (%i*%sigma[2],%sigma[3])$
+g4 :  g0$
+g5 :  - kronecker_product (%sigma[1],%sigma[0])$
+
+
+/* 
+The block Dslash perform the d-slash operation
+in rectangular coordinates on a quadrivector
+*/
+/*********** Block start **********************/
+Dslash(Ap) := 
+block([],
+DAp :  factor(j*k*g0.Ap+diff(g1.Ap,x)+diff(g2.Ap,y)+diff(g3.Ap,z))
+)$
+/*********** Block end **********************/
+
+print("_______________________________________")$
+print("The vector E and H in general depend on x,y,z,")$
+
+/* 3D case */
+depends([Ex,Ey,Ez],[x,y,z]);
+depends([Hx,Hy,Hz],[x,y,z]);
+
+depends([Cx,Cy,Cz],[x,y,z]);
+depends([%psi],[x,y,z]);
+
+/* For recovering the Hertzian potential 
+depends(Psih,[x,y,z]);
+Cx : 0$ 
+Cy : 0$
+Cz : j * k/v*Psih$
+*/
+
+/* For potential in a rectangular waveguide */
+cnx : cos(n*%pi/a*x)$
+cmy : cos(m*%pi/b*y)$
+propz : %e^(-j * k[z]*z)$
+Cx:0 $ 
+Cy:0$
+Cz : cnx * cmy * propz;
+
+/* Potential in a parallel plate waveguide
+cnx : cos(n*%pi/a*x)$
+propz : %e^(-j * k[z]*z)$
+Cx:0 $ 
+Cy:0$
+Cz : cnx  * propz;
+ */
+print("_______________________________________")$
+print("compose the Potential Quadrivector")$
+C:  - %i * %eta * matrix([%psi],[0],[v* Cz],[v* Cx+%i * Cy*v]);
+
+print("compose the Field Quadrivector")$
+F: matrix([Ez],[Ex+%i * Ey],[%i * %eta *Hz],[%i*%eta*(Hx + %i*Hy)]);
+/*
+print("compose the Source Quadrivector")$
+Jm: matrix([%rho[m]*v],[0],[Mz],[Mx+%i * My]);
+*/
+print("_________________ D-slah __________________________________________")$
+print("Application of the d-slash operator on the potential gives")$
+Cpot : rectform(C)$
+Dslash(Cpot)$
+DslCpot : rectform(DAp);
+/*
+print("further application gives")$
+Dslash(DslCpot)$
+DCp2 : DAp$
+DCp2 :subst(-1,j^2,DCp2);
+print("Potentials equations")$
+DCp2 +%i * Jm; 
+*/
+print("setting to zero the imaginary part gives Lorenz condition")$
+ie1 :imagpart(DslCpot[1,1]);
+solpsi : solve(ie1,%psi);
+%psi : rhs(solpsi[1])$
+print("compose again the Potential Quadrivector satisfying Lorenz gauge")$
+C:  - %i * %eta * matrix([%psi],[0],[v* Cz],[v* Cx+%i * Cy*v]);
+
+print("_________________ D-slah __________________________________________")$
+print("Application of the d-slash operator on the Potential gives")$
+Cp : rectform(C)$
+Dslash(Cp)$
+DCp1 :  - rectform(DAp)$
+DCp1 :subst(-1,j^2,DCp1);
+/* DCp1 :subst(-1/j,j,DCp1);*/
+
+Ex :  ratsimp(realpart(DCp1[2][1]))$
+Ey :  ratsimp(imagpart(DCp1[2][1]))$
+Ez :  ratsimp(DCp1[1][1])$
+Hy :  -1/%eta *ratsimp(realpart(DCp1[4][1]))$
+Hx :  1/%eta *ratsimp(imagpart(DCp1[4][1]))$
+Hz :  1/%eta * ratsimp(imagpart(DCp1[3][1]))$
+
+Hx:ratsimp(Hx)$
+Hy:ratsimp(Hy)$
+Hz:factor(Hz)$
+
+print("Which provides the field equations")$
+print('Ex," = ",Ex)$
+print('Ey," = ",Ey)$
+print('Ez," = ",Ez)$
+print('Hx," = ",Hx)$
+print('Hy," = ",Hy)$
+print('Hz," = ",Hz)$
+/* */
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

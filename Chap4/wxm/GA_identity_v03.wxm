@@ -1,0 +1,73 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+/* code name : GA_identity_v03 */
+
+%sigma[0] : matrix([1,0],[0,1])$
+%sigma[1] : matrix([0,1],[1,0])$
+%sigma[2] : matrix([0,-%i],[%i,0])$
+%sigma[3] : matrix([1,0],[0,-1])$
+
+print("Nabla as Pauli matrix")$
+Np : %delta[x] * %sigma[1] + %delta[y] * %sigma[2] + %delta[z] * %sigma[3];
+
+print("vector U as Pauli matrix")$
+Up : U[x] * %sigma[1] + U[y] * %sigma[2] + U[z] * %sigma[3];
+print("vector V as Pauli matrix")$
+Vp : V[x] * %sigma[1] + V[y] * %sigma[2] + V[z] * %sigma[3];
+
+print("________________________________________________")$
+print("Compute div (U wedge V)")$
+UV : ratsimp(Up . Vp)$
+divUV : ratsimp((UV[1,1]+ UV[2,2])/2)$
+print("U wedge V")$
+UwV : ratsimp(UV - divUV*%sigma[0]);
+print("Nabla UwV")$
+NUwV: ratsimp(Np.UwV);
+NdivUwV : ratsimp((NUwV[1,1]+ NUwV[2,2])/2);
+print("div U wedge V")$
+NdUwV : ratsimp(NUwV - NdivUwV*%sigma[0]);
+
+print("________________________________________________")$
+print("Compute V dot (nabla wedge U)")$
+print("Nabla U")$
+NpUp : (Np . Up);
+divNU : ratsimp((NpUp[1,1]+ NpUp[2,2])/2)$
+print("Nabla wedge U")$
+NwU : ratsimp(NpUp - divNU*%sigma[0]);
+print("V Nabla wedge U")$
+VNwU : ratsimp(Vp . NwU);
+VdNwU : ratsimp((VNwU[1,1]+ VNwU[2,2])/2)$
+print("V dot (Nabla wedge U)")$
+VdotNwU : ratsimp(VNwU-VdNwU*%sigma[0]);
+
+print("________________________________________________")$
+print("Compute U dot (nabla wedge V)")$
+print("Compute nabla wedge V")$
+NpVp : (Np . Vp)$
+divNV : ratsimp((NpVp[1,1]+ NpVp[2,2])/2)$
+NwV : ratsimp(NpVp - divNV*%sigma[0]);
+
+print("U Nabla wedge V")$
+UNwV : ratsimp(Up . NwV);
+
+UdNwV : ratsimp((UNwV[1,1]+ UNwV[2,2])/2)$
+
+print("U dot (Nabla wedge V)")$
+UdotNwV : ratsimp(UNwV - UdNwV*%sigma[0]);
+
+
+print("________________________________________________")$
+ratsimp(NdUwV - (-VdotNwU + UdotNwV));
+/*
+ratsimp(NdUwV - (VdotNwU ));
+ratsimp(NdUwV - ( - UdotNwV));
+*/
+
+print("Bye")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
