@@ -1,0 +1,71 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+
+print("The delta function placed in the origin is rather simple to be expressed in cartesian coordinates as:")$
+dc : delta(x)*delta(y)*delta(z);
+
+print("In a more general coordinate system, the form of dV determines that of delta(r). Let (u,v,w) be a set of curvilinear coordinates.")$
+
+print("The volume element at a regular point is J du dv dw, 
+where J denotes the Jacobian of the transformation from the (x, y, z) coordinates into the (u, v, w) coordinates.")$
+
+print("The three-dimensional delta function can be expressed in terms of one- dimensional functions by the relationship")$
+delta(u-u[0],v-v[0],w-w[0]);
+print(" = ")$
+delta(u-u[0])*delta(v-v[0])*delta(w-w[0])/J(x[0], y[0], z[0]);
+
+print("Example for spherical coordinates")$
+
+print("Express the rectangular coordinates in terms of the spherical ones")$
+x(r,theta,phi):=r*sin(theta)*cos(phi);
+y(r,theta,phi):=r*sin(theta)*sin(phi);
+z(r,theta,phi):=r*cos(theta);
+
+print("now compute the jacobian of the transformation (see eq 1.24 of Van Bladel)")$
+Jac : jacobian([x(r,theta,phi),y(r,theta,phi),z(r,theta,phi)],[r,theta,phi]);
+DJ : determinant(Jac);
+DJ : trigsimp(DJ);
+
+print("In general the delta expression in spherical coordinates is")$
+delta(r-r[0])*delta(theta-theta[0])*delta(phi-phi[0])/ (r^2 * sin(theta));
+
+print("The singular points of the coordinate system are those at which the jacobian vanishes.")$
+print("At such points, the transformation from (x,y,z) into (u,v,w) is no longer of the one-to-one type,")$
+print("and some of the (u,v,w) coordinates become ignorable,i.e. they need not be known to find the corresponding (x,y,z)")$
+
+print("On the polar axis (where theta[0] is zero or pi), the azimuth phi is ignorable, and we need to integrate the Jacobian over phi")$
+print(" The integral of the Jacobian over phi [0,2pi] gives ",2*%pi)$
+print("on the polar axis the delta function is thus expressed as")$
+delta(r-r[0])*delta(theta-theta[0])/ (2 * %pi * r^2 * sin(theta));
+
+
+
+print("At the origin both ", theta," And ",phi,"are ignorable.")$
+print("Therefore we need to integrate also sin(theta) over theta from 0 to  pi, which gives")$
+integrate(sin(theta),theta,0,%pi);
+print("Accordingly, the delta function at the origin in spherical coordinates is")$
+delta(r)/ (4 * %pi * r^2 );
+
+print("Now we'll try for the polar (circular cylindrical) coordinates")$
+print("Express the rectangular coordinates in terms of the polar ones")$
+x(rho,phi,z):=rho*cos(phi);
+y(rho,phi,z):=rho*sin(phi);
+z(rho,phi,z):=z;
+
+print("now compute the jacobian of the transformation (see eq 1.24 of Van Bladel)")$
+Jac : jacobian([x(rho,phi,z),y(rho,phi,z),z(rho,phi,z)],[rho,phi,z]);
+DJ : determinant(Jac);
+DJ : trigsimp(DJ);
+
+print("In cylindrical coordinates, for example, J is equal to rho, and")$
+1/rho[0]*delta(rho-rho[0])*delta(phi-phi[0])*delta(z-z[0]);
+print("Points on the z axis are singular, and phi is ignorable there. We therefore write")$
+1/(2 * %pi * rho)*delta(rho)*delta(z-z[0]);
+print("Bye")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
