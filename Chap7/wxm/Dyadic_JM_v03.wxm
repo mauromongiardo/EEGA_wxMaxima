@@ -1,0 +1,176 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+load(Pauli_v02);
+load(Dirac_v01);
+functions$
+
+/* code name : Dyadic_JM_v03 */
+
+print("The double integral is omitted for the moment")$
+print("Definition of function %Phi as in the book")$
+%Phi : 1/(2*%pi) * %e^(-j*(k[x]*x+k[y]*y) -j*k[z]*z);
+
+%Psi : -j * %Phi/k[z]$
+
+%mu : %eta/v;
+const : (%mu )/(4 * %pi)$ 
+const2 : 1/(%eta*v)/(4 * %pi)$
+
+scalpotx : D[x]*const * %Psi$
+scalpoty : D[y]*const * %Psi$
+scalpotz : D[z]*const * %Psi$
+
+cscalpotx : N[x]*const2 * %Psi$
+cscalpoty : N[y]*const2 * %Psi$
+cscalpotz : N[z]*const2 * %Psi$
+
+print("___________________________________________")$
+print("Start computations with Dslash")$
+print("___________________________________________")$
+Ax : scalpotx$   
+Ay : scalpoty$
+Az : scalpotz$
+
+Cx : cscalpotx$   
+Cy : cscalpoty$
+Cz : cscalpotz$
+
+dpsidx :diff(scalpotx,x)$
+dpsidx : subst(-1,j^2,dpsidx)$
+
+dpsidy :diff(scalpoty,y)$
+dpsidy : subst(-1,j^2,dpsidy)$
+
+dpsidz :diff(scalpotz,z)$
+dpsidz : subst(-1,j^2,dpsidz)$
+
+cdpsidx :diff(cscalpotx,x)$
+cdpsidx : subst(-1,j^2,cdpsidx)$
+
+cdpsidy :diff(cscalpoty,y)$
+cdpsidy : subst(-1,j^2,cdpsidy)$
+
+cdpsidz :diff(cscalpotz,z)$
+cdpsidz : subst(-1,j^2,cdpsidz)$
+
+ppsi : j*v/k *(cdpsidx+cdpsidy+cdpsidz)$
+
+print("compose the Potential Quadrivector")$
+Aq :  matrix([v* Az - %i * %eta * ppsi],[v*(Ax+%i*Ay)],
+[j*v/k*(dpsidx+dpsidy+dpsidz)-%i *%eta*v*Cz],[-%i*%eta*v*(Cx+%i*Cy)])$
+Aq :  ratsimp(Aq);
+
+A : Aq$
+A : ratsimp(A)$
+A : factor(subst(-1,j^2,A))$
+Ap: A$
+
+print("Potential with %Phi factored out and also /(-j/(4 *%pi *k[z]))")$
+Apphi : factor(Ap / %Phi);
+Apphisimp : factor((Ap / %Phi)/(-j/(4 *%pi *k[z])));
+
+print("Perform the d-slash operator on the potential")$
+DAp : Dslash(Ap)$
+DAp : subst(-1,j^2,DAp);
+
+print("Field with %Phi factored out")$
+DApphi : rectform(factor(ratsimp(DAp / %Phi)));
+
+print("Dslash when acting on Weyl expression")$
+gk0 : j*k*g0$
+gk1 : diff(%Phi,x)*g1/%Phi$
+gk2 : diff(%Phi,y)*g2/%Phi$
+gk3 : diff(%Phi,z)*g3/%Phi$
+gktot : gk0+gk1+gk2+gk3;
+
+print("apart for %Phi" )$
+gApphi : -factor(gktot.Apphi)/j^2$
+gApphi : rectform(gApphi);
+print("Difference between fields obtained via dslash and via k matrix")$
+difference : ratsimp(DApphi - gApphi);
+
+print("all the sources are present")$
+Sources : matrix([J[z]*%eta],[J[x]*%eta+%i * J[y]*%eta],[-%i * M[z]],[-%i *M[x]+ M[y]]);
+print("and, when integrated over the volume, we have the dipole moments")$
+Dipoles : matrix([D[z]*%eta],[D[x]*%eta+%i * D[y]*%eta],[-%i * N[z]],[-%i *N[x]+ N[y]]);
+
+print("Matrix which allows to pass from sources to potentials")$
+S2P : -j /(4*%pi)* 1/k[z] * 
+matrix([1,0,k[z]/k, -%i*(k[x]*N[x]+k[y]*N[y])/k/(N[y]-%i*N[x])],
+             [0,1,0,0],
+             [k[z]/k,(k[x]*D[x]+k[y]*D[y])/(D[x]+%i*D[y])/k,1,0],
+             [0,0,0,(N[y]-%i*N[x])/ (N[y]-%i*N[x])] );
+print("Factoring out -j /(4*%pi)* 1/k[z]")$
+S2P/(-j /(4*%pi)* 1/k[z]);
+
+print("S2P times Dipoles")$
+S2PS : (ratsimp(S2P.Dipoles));
+
+print("Factoring out -j /(4*%pi)* 1/k[z]")$
+ratsimp(S2PS/(-j /(4*%pi)* 1/k[z]));
+
+print("Difference between potentials should be zero")$
+ratsimp(Apphi-S2P.Dipoles);
+
+print("Dyadic Green's function (The 1/(4*%Pi) has been suppressed)")$
+gs2p : gktot.S2P*(4*%pi)$
+gs2p : substitute(-1,j^2,gs2p)$
+gs2p : factor(gs2p )$
+gs2p : substitute(-1,j^2,gs2p);
+
+print("Evaluate Green's function in the special case")$
+gs2p0 : factor(ev(gs2p,D[x]=0,N[y]=0));
+Dip0 : ev(Dipoles,D[x]=0,D[y]=0,D[z]=0,N[y]=0,N[z]=0);
+print("Field produced by N[x]")$
+FMx : gs2p0 . Dip0;
+
+gs2ps : factor(gs2p.Dipoles)$
+
+print("test on fields")$
+ratsimp(DApphi*(4*%pi) -gs2ps) ;
+/*
+
+print("From the 4vector compose the Pauli matrices")$
+print("vector part")$
+PPz : realpart(DAp[1][1])$
+ xpiy : DAp[2][1]$
+ xmiy : conjugate(xpiy)$
+PP : matrix([PPz ,xmiy ],[xpiy,-PPz]);
+
+print("Bivector part")$
+PPz: imagpart(DAp[3][1])/%eta$
+/*  xpiy :  DAp[4][1]/(%i * %eta)$ */
+xpiy : - %i*DAp[4][1]$
+ xmiy : conjugate(xpiy)$
+PPBi :  matrix([PPz ,xmiy ],[xpiy,-PPz]);
+
+M : PP+ %i *  PPBi$
+Gradesep(M)$
+
+print("Final result")$
+
+Ex : -a1r$
+Ey : -a2r$
+Ez : -a3r$
+print("The field is the following")$
+print('Ex," = ",Ex)$
+print('Ey," = ",Ey)$
+print('Ez," = ",Ez)$
+
+Hx : -B1r/%eta$
+Hy : -B2r/%eta$
+Hz : -B3r/%eta$
+print("The field is the following")$
+print('Hx," = ",Hx)$
+print('Hy," = ",Hy)$
+print('Hz," = ",Hz)$
+*/
+
+print("Bye")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
