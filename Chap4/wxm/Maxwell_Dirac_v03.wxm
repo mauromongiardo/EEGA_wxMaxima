@@ -43,10 +43,10 @@ depends([Ex,Ey,Ez],[x,z]);
 depends([Hx,Hy,Hz],[x,z]);
 */
 
-/* 1D--case no x,y dependence */
+/* 1D--case no x,y dependence 
 depends([Ex,Ey,Ez],[z]);
 depends([Hx,Hy,Hz],[z]);
-
+*/
 
 print("compose the Field Quadrivector")$
 F: matrix([Ez],[Ex+%i * Ey],[%i * %eta *Hz],[%i*%eta*(Hx + %i*Hy)]);
