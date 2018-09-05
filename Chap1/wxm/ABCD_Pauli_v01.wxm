@@ -1,0 +1,40 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+
+load(Pauli_v02);
+load(Dirac_v01);
+
+print("==============================")$
+print("Given a 2x2 matrix of the form")$
+ABCD : matrix([A,B],[C,D]);
+
+print("we try to represent this matrix in terms of the pauli matrices")$
+
+ABCDP : %alpha[0]*%sigma[0] + %alpha[1]*%sigma[1] + %alpha[2]*%sigma[2] + %alpha[3]*%sigma[3];
+
+print("Four equations are derived, namely ")$
+eq1 : ABCD[1,1]-ABCDP[1,1];
+eq2 : ABCD[1,2]-ABCDP[1,2];
+eq3 : ABCD[2,1]-ABCDP[2,1];
+eq4 : ABCD[2,2]-ABCDP[2,2];
+
+print("and we try to solve for the sigma matrices coefficients")$
+print("obtaining")$
+sol : solve([eq1,eq2,eq3,eq4],[%alpha[0],%alpha[1],%alpha[2],%alpha[3]]);
+%alpha[0] : rhs(sol[1][1])$
+%alpha[1] : rhs(sol[1][2])$
+%alpha[2] : rhs(sol[1][3])$
+%alpha[3] : rhs(sol[1][4])$
+print('%alpha[0]," = ",%alpha[0])$
+print('%alpha[1]," = ",%alpha[1])$
+print('%alpha[2]," = ",%alpha[2])$
+print('%alpha[3]," = ",%alpha[3])$
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
