@@ -1,0 +1,83 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 15.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+pathmaxima:file_search_maxima$
+pathmaxima[2];
+kill(all)$
+
+load("clifford.mac");
+load("cliffordan.mac");
+
+if get('clifford,'version)=false then load("clifford")$
+if get('cliffordan,'version)=false then load("cliffordan")$
+("Cliford implements Clifford algebra for Maxima.")$
+
+print("Using Cl(2) with the e basis") $	
+clifford(e, 2);
+
+print("The space is formed by ")$
+EE:cons(1, %elements );
+
+print("Table of direct products")$
+mtable1(%elements);
+
+print("Table of external product")$
+mtable1o(%elements);
+
+print("The elements are recovered as")$
+EE[1]; EE[2]; EE[3]; EE[4];
+/* */
+
+print("_____________________________________")$
+print("Program Starts")$
+print("_____________________________________")$
+
+print("construct vector a")$
+ac:cvect(a); 
+print("construct vector b")$
+bc:cvect(b);
+print("_____________________________________")$
+"basic products";
+print("_____________________________________")$
+adotb  :ac | bc$
+awedgeb :ac & bc$
+ab :ac . bc$
+print("a dot b = ",'adotb," = ",adotb)$
+print("a wedge b = ",'awedgeb," = ",awedgeb)$
+print("a  b = ",'ab," = ",ab)$
+print("expand ab ", expand(ab))$
+
+print("grade")$
+gab : grade(ab);
+print("grade 0"," = ",gab[1])$
+print("grade 1"," = ",gab[2])$
+print("grade 2"," = ",gab[3])$
+print("The product of two vectors has given a scalar plus a bivector ")$
+
+print("_____________________________________")$
+print ("Start Investigations")$
+print("_____________________________________")$
+print("perform e1 . a" )$
+
+e1a : e[1] . ac;
+e1a : dotsimpc(expand(e1a));
+print("Grades")$
+ge1a : grade(e1a);
+
+print("_____________________________________")$
+print ("Reflection")$
+print("_____________________________________")$
+
+print("now perform e1 . a . e1" )$
+e1ae1 : dotsimpc(expand(e1a . e[1]));
+
+print("The e1 component is not changed")$
+print("The e2 component has taken the minus sign")$
+print("vector a has been reflected w.r.t. e1")$
+
+print("end")$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

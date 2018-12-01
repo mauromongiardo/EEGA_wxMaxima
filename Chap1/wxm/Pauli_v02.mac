@@ -138,19 +138,11 @@ of a Pauli matrix in cylindrical coordinates */
 
 Nablacyl(Ap) := 
 block([],
-
-print("performing Nabla"),
-emp : %e^(- %i * phi),
-epp : %e^( %i * phi),
-
-NAp11 : diff(Ap[1,1],z)+emp*diff(Ap[2,1],%rho)-%i*emp/%rho*diff(Ap[2,1],phi),
-NAp12 : diff(Ap[1,2],z)+emp*diff(Ap[2,2],%rho)-%i*emp/%rho*diff(Ap[2,2],phi),
-NAp21 :-diff(Ap[2,1],z)+epp*diff(Ap[1,1],%rho)+%i*epp/%rho*diff(Ap[1,1],phi),
-NAp22 :-diff(Ap[2,2],z)+epp*diff(Ap[1,2],%rho)+%i*epp/%rho*diff(Ap[1,2],phi),
-
-NAp : factor(matrix([NAp11, NAp12],[NAp21, NAp22]))
+NAp : %sigma[%rho].(diff(Ap,%rho)) + 1/%rho * %sigma[phi].(diff(Ap,phi)) + %sigma[3].(diff(Ap,z)),
+NAp : factor(NAp)
 )$
 /***********************Block end***********************/
+
 
 
 /***********************Block start***********************/
@@ -209,48 +201,10 @@ Ap : matrix([a11,a12],[a21,a22])$
 /*_________________________________________________________________*/
 Nablasph(Ap) := 
 block([],
-
-print("Computing Nabla"),
-
-n11ap11 : cos(%theta)*diff(Ap[1,1],r)-
-            sin(%theta)/r * diff(Ap[1,1],%theta),
-n12ap21 : sin(%theta)*diff(Ap[2,1],r) 
-            + cos(%theta)/r * diff(Ap[2,1],%theta) -
-            %i/(r*sin(%theta))*diff(Ap[2,1],phi),
-n12ap21 : n12ap21 * %e^(-%i*phi),
-NEp11 : ratsimp(n11ap11 + n12ap21),
-NEp11 : trigsimp(NEp11),
-
-n21ap11 : sin(%theta)*diff(Ap[1,1],r) 
-            + cos(%theta)/r * diff(Ap[1,1],%theta) +
-            %i/(r*sin(%theta))*diff(Ap[1,1],phi),
-n21ap11 : n21ap11 * %e^(%i*phi),
-n22ap21 : -cos(%theta)*diff(Ap[2,1],r)
-            +sin(%theta)/r * diff(Ap[2,1],%theta),
-NEp21 : ratsimp(n21ap11 + n22ap21),
-NEp21 : trigsimp(NEp21),
-
-n11ap12 : cos(%theta)*diff(Ap[1,2],r)
-            -sin(%theta)/r * diff(Ap[1,2],%theta),
-n12ap22 : sin(%theta)*diff(Ap[2,2],r) 
-            + cos(%theta)/r * diff(Ap[2,2],%theta) -
-            %i/(r*sin(%theta))*diff(Ap[2,2],phi),
-n12ap22 : n12ap22 * %e^(-%i*phi),
-NEp12 : ratsimp(n11ap12 + n12ap22),
-NEp12 : trigsimp(NEp12),
-
-
-n21ap12 : sin(%theta)*diff(Ap[1,2],r) 
-            + cos(%theta)/r * diff(Ap[1,2],%theta) +
-            %i/(r*sin(%theta))*diff(Ap[1,2],phi),
-n21ap12 : n21ap12 * %e^(%i*phi),
-n22ap22 : -cos(%theta)*diff(Ap[2,2],r)
-            +sin(%theta)/r * diff(Ap[2,2],%theta),
-NEp22 : ratsimp(n21ap12 + n22ap22),
-NEp22 : trigsimp(NEp22),
-
-NEp : expand((matrix([NEp11, NEp12],[NEp21, NEp22]))),
-NEp : factor(trigsimp(NEp))
+NAp: %sigma[r].(diff(Ap,r)) + 1/r * %sigma[%theta].(diff(Ap,%theta)) +
+1/(r*sin(%theta)) * %sigma[phi].(diff(Ap,phi)),
+NAp : expand(NAp),
+NAp : factor(trigsimp(NAp))
 )$
 /*_________________________________________________________________*/
 /* Block end */
